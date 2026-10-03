@@ -1,0 +1,10 @@
+{
+  "uuid": "away-lock@himuraw",
+  "name": "Away Lock",
+  "description": "Locks the screen when you walk away from the computer.\n\nWhile the computer is idle it takes a quick look through the camera every few seconds (an IR camera works in the dark too). When nobody is there for two looks in a row, the screen locks. The camera stays off while you type or move the mouse, and while a video or Caffeine keeps the session awake. Frames are never saved.\n\nNeeds python3 with OpenCV and dlib, which Howdy (face unlock) already installs; with Howdy it uses the same camera.",
+  "shell-version": ["50"],
+  "url": "https://github.com/HIMURAw/gnome-away-lock",
+  "settings-schema": "org.gnome.shell.extensions.away-lock",
+  "gettext-domain": "away-lock@himuraw",
+  "version-name": "1.0"
+}

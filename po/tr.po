@@ -1,0 +1,56 @@
+# Turkish translation for Away Lock.
+msgid ""
+msgstr ""
+"Project-Id-Version: Away Lock\n"
+"PO-Revision-Date: 2026-10-03 15:40+0300\n"
+"Last-Translator: Umut\n"
+"Language-Team: Turkish\n"
+"Language: tr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: extension.js:26
+msgid "{n} s"
+msgstr "{n} sn"
+
+#: extension.js:26
+msgid "{n} min"
+msgstr "{n} dk"
+
+#: extension.js:51 extension.js:58 extension.js:265
+msgid "Away Lock"
+msgstr "Uzaklaşınca Kilitle"
+
+#: extension.js:53
+msgid "Open away lock menu"
+msgstr "Uzaklaşınca kilitle menüsünü aç"
+
+#: extension.js:59
+msgid "Locks the screen when you leave the computer"
+msgstr "Bilgisayardan kalkınca ekranı kilitler"
+
+#: extension.js:61
+msgid "Start looking after"
+msgstr "Bakmaya başlama süresi"
+
+#: extension.js:70
+msgid "Test the camera now"
+msgstr "Kamerayı şimdi dene"
+
+#: extension.js:247
+msgid "Saw you at {n}"
+msgstr "{n}: seni gördü"
+
+#: extension.js:248
+msgid "Nobody there at {n}"
+msgstr "{n}: kimse yok"
+
+#: extension.js:249 extension.js:251
+msgid "Camera busy at {n}"
+msgstr "{n}: kamera meşgul"
+
+#: extension.js:250
+msgid "Needs python3-opencv and dlib (Howdy installs them)"
+msgstr "python3-opencv ve dlib gerekli (Howdy kurar)"

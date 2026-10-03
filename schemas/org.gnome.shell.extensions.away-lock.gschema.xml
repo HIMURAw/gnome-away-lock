@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist gettext-domain="away-lock@himuraw">
+  <schema id="org.gnome.shell.extensions.away-lock" path="/org/gnome/shell/extensions/away-lock/">
+    <key name="enabled" type="b">
+      <default>true</default>
+      <summary>Lock the screen when nobody is in front of the camera</summary>
+    </key>
+    <key name="idle-seconds" type="i">
+      <range min="10" max="600"/>
+      <default>30</default>
+      <summary>Seconds without input before the camera starts looking</summary>
+    </key>
+    <key name="absent-checks" type="i">
+      <range min="1" max="10"/>
+      <default>2</default>
+      <summary>Looks in a row without a face before locking</summary>
+    </key>
+    <key name="camera" type="s">
+      <default>''</default>
+      <summary>Camera device; empty uses Howdy's camera, or /dev/video0</summary>
+    </key>
+  </schema>
+</schemalist>
