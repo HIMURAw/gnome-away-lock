@@ -9,12 +9,14 @@ import {QuickMenuToggle, SystemIndicator} from 'resource:///org/gnome/shell/ui/q
 
 Gio._promisify(Gio.DBusConnection.prototype, 'call');
 Gio._promisify(Gio.Subprocess.prototype, 'communicate_utf8_async');
+Gio._promisify(Gio.Subprocess.prototype, 'wait_async');
 
 // While the computer sits idle, look for a face every few seconds; after a few
 // looks in a row without one, lock the screen. The camera is never touched
 // while someone is typing or moving the mouse.
 const CHECK_INTERVAL = 10; // seconds between looks
 const CHECK_TIMEOUT = 10; // a look that takes longer than this is abandoned
+const AWAY_TIMEOUT = 5; // the away command must answer within this, or the screen locks
 const WAITS = [15, 30, 60, 120]; // idle seconds before looking, offered in the menu
 const HOWDY_CONFIG = ['/usr/local/etc/howdy/config.ini', '/etc/howdy/config.ini',
     '/usr/lib64/security/howdy/config.ini', '/lib/security/howdy/config.ini'];
@@ -185,7 +187,8 @@ export default class AwayLockExtension extends Extension {
                 return;
             if (result === 'absent' && ++this._misses >= this.settings.get_int('absent-checks')) {
                 this._stopLooking();
-                Main.screenShield.lock(true);
+                if (!await this._handedOver())
+                    Main.screenShield.lock(true);
                 return;
             }
             if (result === 'present' || result === 'busy')
@@ -211,6 +214,32 @@ export default class AwayLockExtension extends Extension {
             return reply.deepUnpack()[0];
         } catch {
             return false;
+        }
+    }
+
+    // Nobody there: the away command may take over (it then locks when done). Anything
+    // but a quick exit 0 locks now, so a broken command never leaves the screen open.
+    async _handedOver() {
+        const command = this.settings.get_string('away-command').trim();
+        if (!command)
+            return false;
+        let timeout = 0;
+        try {
+            const proc = Gio.Subprocess.new(['sh', '-c', command],
+                Gio.SubprocessFlags.STDOUT_SILENCE | Gio.SubprocessFlags.STDERR_SILENCE);
+            timeout = GLib.timeout_add_seconds(GLib.PRIORITY_DEFAULT, AWAY_TIMEOUT, () => {
+                timeout = 0;
+                proc.force_exit();
+                return GLib.SOURCE_REMOVE;
+            });
+            await proc.wait_async(null);
+            return proc.get_if_exited() && proc.get_exit_status() === 0;
+        } catch (e) {
+            console.error('Away Lock: could not run the away command', e);
+            return false;
+        } finally {
+            if (timeout)
+                GLib.source_remove(timeout);
         }
     }
 

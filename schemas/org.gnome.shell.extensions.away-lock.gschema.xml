@@ -19,5 +19,10 @@
       <default>''</default>
       <summary>Camera device; empty uses Howdy's camera, or /dev/video0</summary>
     </key>
+    <key name="away-command" type="s">
+      <default>''</default>
+      <summary>Command asked before locking when nobody is there</summary>
+      <description>Run (as a shell command line) when nobody is there, instead of locking. Exit 0 means it takes over and will lock the screen itself when done; anything else, or no answer within a few seconds, and the screen locks now.</description>
+    </key>
   </schema>
 </schemalist>
