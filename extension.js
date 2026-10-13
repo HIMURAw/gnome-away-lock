@@ -7,6 +7,8 @@ import * as Main from 'resource:///org/gnome/shell/ui/main.js';
 import * as PopupMenu from 'resource:///org/gnome/shell/ui/popupMenu.js';
 import {QuickMenuToggle, SystemIndicator} from 'resource:///org/gnome/shell/ui/quickSettings.js';
 
+import {SleepGuard} from './sleep.js';
+
 Gio._promisify(Gio.DBusConnection.prototype, 'call');
 Gio._promisify(Gio.Subprocess.prototype, 'communicate_utf8_async');
 Gio._promisify(Gio.Subprocess.prototype, 'wait_async');
@@ -121,9 +123,13 @@ export default class AwayLockExtension extends Extension {
 
         this._settingsId = this.settings.connect('changed', () => this._arm());
         this._arm();
+        // Before an idle sleep, one more look: someone there keeps it awake (sleep.js).
+        this._sleepGuard = new SleepGuard(this._monitor, () => this._detect(new Gio.Cancellable()));
     }
 
     disable() {
+        this._sleepGuard?.destroy();
+        this._sleepGuard = null;
         this._stopLooking();
         if (this._idleWatch)
             this._monitor.remove_watch(this._idleWatch);
@@ -244,9 +250,10 @@ export default class AwayLockExtension extends Extension {
     }
 
     // Runs detect.py once; resolves to 'present', 'absent', 'busy' or 'missing'.
-    async _detect() {
+    async _detect(cancellable = null) {
         const camera = findCamera(this.settings);
-        this._cancellable = new Gio.Cancellable();
+        if (!cancellable)
+            this._cancellable = cancellable = new Gio.Cancellable();
         let result = 'busy';
         let timeout = 0;
         try {
@@ -257,7 +264,7 @@ export default class AwayLockExtension extends Extension {
                 proc.force_exit();
                 return GLib.SOURCE_REMOVE;
             });
-            const [stdout] = await proc.communicate_utf8_async(null, this._cancellable);
+            const [stdout] = await proc.communicate_utf8_async(null, cancellable);
             result = stdout?.trim() || 'busy';
         } catch (e) {
             if (!e.matches?.(Gio.IOErrorEnum, Gio.IOErrorEnum.CANCELLED))
