@@ -49,3 +49,7 @@ Log out and back in once.
 - `./detect.py /dev/video2` prints `present`, `absent`, `busy` or `missing`.
 - `./build.sh pot` refreshes translations, `./build.sh pack` builds the zip.
 - `npm install && npx eslint .` lints the code.
+
+## License
+
+GPL-3.0
